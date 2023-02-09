@@ -1,64 +1,100 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextBoxComponent } from "@syncfusion/ej2-react-inputs";
-import { DropDownListComponent } from "@syncfusion/ej2-react-dropdowns";
-import {
-  CheckBoxComponent,
-  RadioButtonComponent,
-  ButtonComponent,
-} from "@syncfusion/ej2-react-buttons";
-import "@syncfusion/ej2-base/styles/material.css";
-import "@syncfusion/ej2-inputs/styles/material.css";
-import "@syncfusion/ej2-react-dropdowns/styles/material.css";
-import "@syncfusion/ej2-buttons/styles/material.css";
+
 import "../App.css";
 import { Link } from "react-router-dom";
 
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+// import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+
+const maxLength = 40,
+  textFiledSize = "normal",
+  textFieldVariant = "outlined";
+
 const dynamicForm = {
-  firstName: {
-    label: "First Name",
+  Nombre: {
+    placeholder: "Nombre",
     type: "text",
-    placeholder: "Enter your first name",
     defaultValue: "",
+    variant: textFieldVariant,
+    size: textFiledSize,
+    inputProps: { maxLength: maxLength },
     rules: {
       required: true,
     },
   },
-  lastName: {
-    label: "Last Name",
+  PrimerApellido: {
+    placeholder: "Primer Apellido",
     type: "text",
-    placeholder: "Enter your last name",
     defaultValue: "",
+    variant: textFieldVariant,
+    size: textFiledSize,
+    inputProps: { maxLength: maxLength },
     rules: {
       required: true,
     },
   },
-  gender: {
-    label: "Gender",
-    type: "radio",
-    options: ["male", "female"],
+  SegundoApellido: {
+    placeholder: "Segundo Apellido",
+    type: "text",
     defaultValue: "",
+    variant: textFieldVariant,
+    size: textFiledSize,
+    inputProps: { maxLength: maxLength },
     rules: {
       required: true,
     },
   },
-  profession: {
-    label: "Profession",
-    type: "dropdown",
-    options: ["Frontend Developer", "Backend Developer", "Devops Engineer"],
+  Carnet: {
+    placeholder: "Carné",
+    type: "text",
     defaultValue: "",
+    variant: textFieldVariant,
+    size: textFiledSize,
+    inputProps: {
+      inputMode: "numeric",
+      pattern: "[0-9]*",
+      minleght: 10,
+      maxLength: 10,
+    },
+    rules: {
+      required: true,
+      minLength: 10,
+      maxLength: 10,
+      pattern: "[0-9]*",
+      // validate: {
+      //   checkPattern: v => validateNumericInput(v) || "Solo nmeros"
+      // }
+    },
+  },
+
+  AsistenteEntrega: {
+    placeholder: "Asistente que entrega",
+    type: "text",
+    defaultValue: "",
+    variant: textFieldVariant,
+    size: textFiledSize,
+    inputProps: { maxLength: maxLength },
     rules: {
       required: true,
     },
   },
-  agree: {
-    type: "checkbox",
-    label: "",
-    checkboxLabel: "I hereby agree to the terms.",
-    defaultValue: false,
-    rules: {
-      required: true,
-    },
+
+  Fecha: {
+    placeholder: "Fecha",
+    type: "date",
+    inputProps: {},
+  },
+
+  Hora: {
+    placeholder: "Hora",
+    type: "time",
+    inputProps: {},
   },
 };
 
@@ -69,40 +105,58 @@ const Input = ({ value, onChange, type, ...rest }) => {
   switch (type) {
     case "text":
       return (
-        <TextBoxComponent
-          placeholder={rest?.placeholder}
-          change={({ value }) => onChange(value)}
+        <TextField
+          fullWidth
+          type="text"
+          onChange={(value) => onChange(value)}
           value={value}
+          placeholder={rest?.placeholder}
+          inputProps={rest?.inputProps}
+          variant={rest?.variant}
+          size={rest?.size}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
       );
-    case "radio":
-      return rest?.options.map((e) => (
-        <RadioButtonComponent
-          key={e}
-          label={e}
-          value={e}
-          onChange={(value) => onChange(value)}
-          checked={value === e}
-        />
-      ));
-    case "dropdown":
+    case "number":
       return (
-        <DropDownListComponent
-          dataSource={rest?.options}
-          select={({ itemData }) => {
-            onChange(itemData.value);
-          }}
+        <TextField
+          type="number"
+          onChange={(value) => onChange(value)}
           value={value}
+          placeholder={rest?.placeholder}
+          inputProps={rest?.inputProps}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
       );
 
-    case "checkbox":
+    case "date":
       return (
-        <CheckBoxComponent
-          label={rest?.checkboxLabel}
-          onChange={(e) => onChange(e.target.checked)}
-          checked={value}
-        />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          {/* <MobileDatePicker */}
+          <DesktopDatePicker
+            label={rest?.placeholder}
+            inputFormat="DD/MM/YYYY"
+            onChange={(value) => onChange(value)}
+            value={value}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+      );
+
+    case "time":
+      return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <TimePicker
+            label={rest?.placeholder}
+            onChange={(value) => onChange(value)}
+            value={value}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
       );
 
     default:
@@ -139,7 +193,8 @@ const Dynamic = () => {
             </div>
           )}
         />
-        {errors[e] && <Error>This field is required</Error>}
+        {errors[e] && <Error>Este campo es obligatorio</Error>}
+        {/* {errors[e] && <Error>{errors[e].className}</Error>} */}
       </section>
     );
   });
@@ -153,14 +208,14 @@ const Dynamic = () => {
     <div className="wrapper">
       <h1>Dynamic Form Example</h1>
       <Link to="/normal">
-        <ButtonComponent cssClass="e-success">Go to Normal</ButtonComponent>
+        <Button cssClass="e-success">Go to Normal</Button>
       </Link>
       <form onSubmit={handleSubmit(onSubmit)}>
         {formInputs}
         <div style={{ textAlign: "center" }}>
-          <ButtonComponent type="submit" cssClass="e-success">
+          <Button type="submit" cssClass="e-success">
             Success
-          </ButtonComponent>
+          </Button>
         </div>
       </form>
     </div>

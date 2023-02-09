@@ -9,7 +9,7 @@ const App = () => {
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <div className="wrapper">
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", justifyContent: "space-between"}}>
         <Link to="/normal">
           <ButtonComponent cssClass="e-success">Normal</ButtonComponent>
         </Link>
